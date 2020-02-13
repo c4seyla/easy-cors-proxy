@@ -2,11 +2,12 @@ var http = require('http'),
     request = require('request'),
     url = require('url');
 
-var port = process.env.PORT || 8000,
-    proxyURL = process.env.PROXY_URL || 'http://registry.npmjs.org:80/',
+var port = process.env.PORT || 3128,
+    proxyURL = process.env.PROXY_URL || 'http://192.168.15.57:9200',
     allowOrigin = process.env.ALLOW_ORIGIN || '*',
     allowMethods = process.env.ALLOW_METHODS || '*',
-    allowHeaders = process.env.ALLOW_HEADERS || 'X-Requested-With'
+    allowCredentials = process.env.ALLOW_CREDENTIALS || 'true'
+    allowHeaders = process.env.ALLOW_HEADERS || 'X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization,x-search-state,x-search-query,x-search-filters'
 
 http.createServer(function (req, res) {
   var r = request(url.resolve(proxyURL, req.url));
@@ -15,6 +16,7 @@ http.createServer(function (req, res) {
   r.on('response', function(_r) {
     _r.headers['Access-Control-Allow-Origin'] = allowOrigin;
     _r.headers['Access-Control-Allow-Methods'] = allowMethods;
+    _r.headers['Access-Control-Allow-Credentials'] = allowCredentials;
     _r.headers['Access-Control-Allow-Headers'] = allowHeaders;
   });
 
